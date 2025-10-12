@@ -4,7 +4,10 @@ import { AdminPage } from "@/admin/pages/AdminPage";
 import { HeroesLayout } from "@/heroes/layout/HeroesLayout";
 import { HeroPage } from "@/heroes/pages/hero/HeroPage";
 import { HomePage } from "@/heroes/pages/home/HomePage";
-import { SearchPage } from "@/heroes/pages/search/SearchPage";
+import { lazy } from "react";
+// import { SearchPage } from "@/heroes/pages/search/SearchPage";
+
+const SearchPage = lazy(() => import("@/heroes/pages/search/SearchPage"));
 
 export const router = createBrowserRouter([
   {
