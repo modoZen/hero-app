@@ -1,9 +1,8 @@
 import { CustomJumbotron } from "@/components/custom/CustomJumbotron";
-import { Button } from "@/components/ui/button";
+import { CustomPagination } from "@/components/custom/CustomPagination";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { HeroGrid } from "@/heroes/components/HeroGrid";
 import { HeroStats } from "@/heroes/components/HeroStats";
-import { ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react";
 import { useState } from "react";
 import { SearchControls } from "../search/ui/SearchControls";
 
@@ -77,30 +76,7 @@ export const HomePage = () => {
         <HeroGrid />
 
         {/* Pagination */}
-        <div className="flex items-center justify-center space-x-2">
-          <Button variant="outline" size="sm" disabled>
-            <ChevronLeft className="h-4 w-4" />
-            Previous
-          </Button>
-
-          <Button variant="default" size="sm">
-            1
-          </Button>
-          <Button variant="outline" size="sm">
-            2
-          </Button>
-          <Button variant="outline" size="sm">
-            3
-          </Button>
-          <Button variant="ghost" size="sm" disabled>
-            <MoreHorizontal className="h-4 w-4" />
-          </Button>
-
-          <Button variant="outline" size="sm">
-            Next
-            <ChevronRight className="h-4 w-4" />
-          </Button>
-        </div>
+        <CustomPagination totalPages={8} />
       </>
     </>
   );
