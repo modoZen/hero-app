@@ -2,9 +2,10 @@ import { CustomBreadcrumb } from "@/components/custom/CustomBreadcrumb";
 import { CustomJumbotron } from "@/components/custom/CustomJumbotron";
 import { CustomPagination } from "@/components/custom/CustomPagination";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { getHeroesByPage } from "@/heroes/actions/getHeroesByPage";
 import { HeroGrid } from "@/heroes/components/HeroGrid";
 import { HeroStats } from "@/heroes/components/HeroStats";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SearchControls } from "../search/ui/SearchControls";
 
 export const HomePage = () => {
@@ -15,6 +16,12 @@ export const HomePage = () => {
   const onTabChange = (value: "all" | "favorites" | "heroes" | "villains") => {
     setActiveTab(value);
   };
+
+  useEffect(() => {
+    getHeroesByPage().then((data) => {
+      console.log(data);
+    });
+  }, []);
 
   return (
     <>
