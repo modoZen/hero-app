@@ -23,6 +23,8 @@ export const HomePage = () => {
     setActiveTab(value);
   };
 
+  console.log({ data });
+
   // useEffect(() => {
   //   getHeroesByPage().then();
   // }, []);
