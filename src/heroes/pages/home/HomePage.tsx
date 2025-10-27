@@ -6,28 +6,33 @@ import { getHeroesByPageAction } from "@/heroes/actions/getHeroesByPage";
 import { HeroGrid } from "@/heroes/components/HeroGrid";
 import { HeroStats } from "@/heroes/components/HeroStats";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
 import { SearchControls } from "../search/ui/SearchControls";
+import { useSearchParams } from "react-router";
+
+type ActiveTab = "all" | "favorites" | "heroes" | "villains";
+
+const isActiveTab = (value: string | null): value is ActiveTab => {
+  return ["all", "favorites", "heroes", "villains"].includes(value ?? "");
+};
 
 export const HomePage = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+
   const { data: heroesData } = useQuery({
     queryKey: ["heroes"],
     queryFn: () => getHeroesByPageAction(),
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
-  const [activeTab, setActiveTab] = useState<
-    "all" | "favorites" | "heroes" | "villains"
-  >("all");
 
-  const onTabChange = (value: "all" | "favorites" | "heroes" | "villains") => {
-    setActiveTab(value);
+  const tabParam = searchParams.get("tab");
+  const activeTab = isActiveTab(tabParam) ? tabParam : "all";
+
+  const onTabChange = (value: ActiveTab) => {
+    setSearchParams((prev) => {
+      prev.set("tab", value);
+      return prev;
+    });
   };
-
-  console.log({ heroesData });
-
-  // useEffect(() => {
-  //   getHeroesByPage().then();
-  // }, []);
 
   return (
     <>
