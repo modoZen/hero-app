@@ -8,6 +8,7 @@ import { HeroStats } from "@/heroes/components/HeroStats";
 import { useQuery } from "@tanstack/react-query";
 import { SearchControls } from "../search/ui/SearchControls";
 import { useSearchParams } from "react-router";
+import { isValidPage } from "@/utils/isValidPage";
 
 type ActiveTab = "all" | "favorites" | "heroes" | "villains";
 
@@ -18,12 +19,13 @@ const isActiveTab = (value: string | null): value is ActiveTab => {
 export const HomePage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const tabParam = searchParams.get("tab");
-  const queryPage = searchParams.get("page") ?? "1";
   const queryLimit = searchParams.get("limit") ?? "6";
+  const queryPage = searchParams.get("page");
+  const page = isValidPage(queryPage);
 
   const { data: heroesData } = useQuery({
-    queryKey: ["heroes", { page: queryPage, limit: queryLimit }],
-    queryFn: () => getHeroesByPageAction(+queryPage, +queryLimit),
+    queryKey: ["heroes", { page, limit: queryLimit }],
+    queryFn: () => getHeroesByPageAction(page, +queryLimit),
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
 

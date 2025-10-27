@@ -1,15 +1,11 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "../ui/button";
 import { useSearchParams } from "react-router";
+import { isValidPage } from "@/utils/isValidPage";
 
 interface Props {
   totalPages: number;
 }
-
-const isValidPage = (value: string | null): number => {
-  const parsed = parseInt(value ?? "", 10);
-  return !isNaN(parsed) && parsed > 0 ? parsed : 1;
-};
 
 export const CustomPagination = ({ totalPages }: Props) => {
   const [searchParams, setSearchParams] = useSearchParams();
