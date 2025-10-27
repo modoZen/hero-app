@@ -18,12 +18,12 @@ const isActiveTab = (value: string | null): value is ActiveTab => {
 export const HomePage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const tabParam = searchParams.get("tab");
-  const pageParam = searchParams.get("page") ?? "1";
-  const limitParam = searchParams.get("limit") ?? "6";
+  const queryPage = searchParams.get("page") ?? "1";
+  const queryLimit = searchParams.get("limit") ?? "6";
 
   const { data: heroesData } = useQuery({
-    queryKey: ["heroes"],
-    queryFn: () => getHeroesByPageAction(+pageParam, +limitParam),
+    queryKey: ["heroes", { page: queryPage, limit: queryLimit }],
+    queryFn: () => getHeroesByPageAction(+queryPage, +queryLimit),
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
 
@@ -99,7 +99,7 @@ export const HomePage = () => {
         {/* <HeroGrid /> */}
 
         {/* Pagination */}
-        <CustomPagination totalPages={8} />
+        <CustomPagination totalPages={heroesData?.pages ?? 1} />
       </>
     </>
   );
