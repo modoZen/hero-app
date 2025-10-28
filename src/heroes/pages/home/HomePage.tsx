@@ -2,14 +2,13 @@ import { CustomBreadcrumb } from "@/components/custom/CustomBreadcrumb";
 import { CustomJumbotron } from "@/components/custom/CustomJumbotron";
 import { CustomPagination } from "@/components/custom/CustomPagination";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { getHeroesByPageAction } from "@/heroes/actions/getHeroesByPage";
 import { HeroGrid } from "@/heroes/components/HeroGrid";
 import { HeroStats } from "@/heroes/components/HeroStats";
-import { useQuery } from "@tanstack/react-query";
 import { SearchControls } from "../search/ui/SearchControls";
 import { useSearchParams } from "react-router";
 import { isValidPage } from "@/utils/isValidPage";
 import { useHeroSummary } from "@/heroes/hooks/useHeroSummary";
+import { usePaginateHero } from "@/heroes/hooks/usePaginateHero";
 
 type ActiveTab = "all" | "favorites" | "heroes" | "villains";
 
@@ -24,11 +23,7 @@ export const HomePage = () => {
   const queryPage = searchParams.get("page");
   const page = isValidPage(queryPage);
 
-  const { data: heroesData } = useQuery({
-    queryKey: ["heroes", { page, limit: queryLimit }],
-    queryFn: () => getHeroesByPageAction(page, +queryLimit),
-    staleTime: 1000 * 60 * 5, // 5 minutes
-  });
+  const { data: heroesData } = usePaginateHero(page, +queryLimit);
 
   const { data: summary } = useHeroSummary();
 
