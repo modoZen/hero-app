@@ -11,6 +11,7 @@ import { useHeroSummary } from "@/heroes/hooks/useHeroSummary";
 import { usePaginateHero } from "@/heroes/hooks/usePaginateHero";
 
 type ActiveTab = "all" | "favorites" | "heroes" | "villains";
+type Category = "all" | "favorites" | "hero" | "villain";
 
 const isActiveTab = (value: string | null): value is ActiveTab => {
   return ["all", "favorites", "heroes", "villains"].includes(value ?? "");
@@ -21,17 +22,20 @@ export const HomePage = () => {
   const tabParam = searchParams.get("tab");
   const queryLimit = searchParams.get("limit") ?? "6";
   const queryPage = searchParams.get("page");
+  const categoryPage = searchParams.get("category") ?? "all";
   const page = isValidPage(queryPage);
 
-  const { data: heroesData } = usePaginateHero(page, +queryLimit);
+  const { data: heroesData } = usePaginateHero(page, +queryLimit, categoryPage);
 
   const { data: summary } = useHeroSummary();
 
   const activeTab = isActiveTab(tabParam) ? tabParam : "all";
 
-  const onTabChange = (value: ActiveTab) => {
+  const onTabChange = (value: ActiveTab, category: Category) => {
     setSearchParams((prev) => {
       prev.set("tab", value);
+      prev.set("category", category);
+      prev.set("page", "1");
       return prev;
     });
   };
@@ -56,22 +60,25 @@ export const HomePage = () => {
         {/* Tabs */}
         <Tabs value={activeTab} className="mb-8">
           <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="all" onClick={() => onTabChange("all")}>
+            <TabsTrigger value="all" onClick={() => onTabChange("all", "all")}>
               All Characters ({summary?.totalHeroes})
             </TabsTrigger>
             <TabsTrigger
               value="favorites"
-              onClick={() => onTabChange("favorites")}
+              onClick={() => onTabChange("favorites", "favorites")}
               className="flex items-center gap-2"
             >
               Favorites (3)
             </TabsTrigger>
-            <TabsTrigger value="heroes" onClick={() => onTabChange("heroes")}>
+            <TabsTrigger
+              value="heroes"
+              onClick={() => onTabChange("heroes", "hero")}
+            >
               Heroes ({summary?.heroCount})
             </TabsTrigger>
             <TabsTrigger
               value="villains"
-              onClick={() => onTabChange("villains")}
+              onClick={() => onTabChange("villains", "villain")}
             >
               Villains ({summary?.villainCount})
             </TabsTrigger>
@@ -87,11 +94,11 @@ export const HomePage = () => {
           </TabsContent>
           <TabsContent value="heroes">
             {/* Mostrar todos los heroes */}
-            <HeroGrid heroes={[]} />
+            <HeroGrid heroes={heroesData?.heroes ?? []} />
           </TabsContent>
           <TabsContent value="villains">
             {/* Mostrar todos los villanos */}
-            <HeroGrid heroes={[]} />
+            <HeroGrid heroes={heroesData?.heroes ?? []} />
           </TabsContent>
         </Tabs>
 

@@ -4,7 +4,8 @@ import type { HeroResponse } from "../domain/Hero";
 
 export const getHeroesByPageAction = async (
   page: number,
-  limit: number = 6
+  limit: number = 6,
+  category: string = "all"
 ): Promise<HeroResponse> => {
   if (isNaN(page) || page < 1) page = 1;
 
@@ -12,6 +13,7 @@ export const getHeroesByPageAction = async (
     params: {
       limit,
       offset: (page - 1) * limit,
+      category,
     },
   });
 
