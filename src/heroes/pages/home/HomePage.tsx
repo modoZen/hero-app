@@ -9,6 +9,7 @@ import { useQuery } from "@tanstack/react-query";
 import { SearchControls } from "../search/ui/SearchControls";
 import { useSearchParams } from "react-router";
 import { isValidPage } from "@/utils/isValidPage";
+import { useHeroSummary } from "@/heroes/hooks/useHeroSummary";
 
 type ActiveTab = "all" | "favorites" | "heroes" | "villains";
 
@@ -28,6 +29,8 @@ export const HomePage = () => {
     queryFn: () => getHeroesByPageAction(page, +queryLimit),
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
+
+  const { data: summary } = useHeroSummary();
 
   const activeTab = isActiveTab(tabParam) ? tabParam : "all";
 
@@ -59,7 +62,7 @@ export const HomePage = () => {
         <Tabs value={activeTab} className="mb-8">
           <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="all" onClick={() => onTabChange("all")}>
-              All Characters (16)
+              All Characters ({summary?.totalHeroes})
             </TabsTrigger>
             <TabsTrigger
               value="favorites"
@@ -69,13 +72,13 @@ export const HomePage = () => {
               Favorites (3)
             </TabsTrigger>
             <TabsTrigger value="heroes" onClick={() => onTabChange("heroes")}>
-              Heroes (12)
+              Heroes ({summary?.heroCount})
             </TabsTrigger>
             <TabsTrigger
               value="villains"
               onClick={() => onTabChange("villains")}
             >
-              Villains (2)
+              Villains ({summary?.villainCount})
             </TabsTrigger>
           </TabsList>
 
