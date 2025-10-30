@@ -9,6 +9,8 @@ import { useSearchParams } from "react-router";
 import { isValidPage } from "@/utils/isValidPage";
 import { useHeroSummary } from "@/heroes/hooks/useHeroSummary";
 import { usePaginateHero } from "@/heroes/hooks/usePaginateHero";
+import { use } from "react";
+import { FavoriteHeroContext } from "@/heroes/context/FavoriteHeroContext";
 
 type ActiveTab = "all" | "favorites" | "heroes" | "villains";
 type Category = "all" | "favorites" | "hero" | "villain";
@@ -30,6 +32,8 @@ export const HomePage = () => {
   const { data: summary } = useHeroSummary();
 
   const activeTab = isActiveTab(tabParam) ? tabParam : "all";
+
+  const { favoriteCount, favorites } = use(FavoriteHeroContext);
 
   const onTabChange = (value: ActiveTab, category: Category) => {
     setSearchParams((prev) => {
@@ -68,7 +72,7 @@ export const HomePage = () => {
               onClick={() => onTabChange("favorites", "favorites")}
               className="flex items-center gap-2"
             >
-              Favorites (3)
+              Favorites ({favoriteCount})
             </TabsTrigger>
             <TabsTrigger
               value="heroes"
@@ -90,7 +94,7 @@ export const HomePage = () => {
           </TabsContent>
           <TabsContent value="favorites">
             {/* Mostrar todos los personajes favoritos */}
-            <HeroGrid heroes={[]} />
+            <HeroGrid heroes={favorites} />
           </TabsContent>
           <TabsContent value="heroes">
             {/* Mostrar todos los heroes */}
