@@ -4,24 +4,33 @@ import { Slider } from "@/components/ui/slider";
 import { Filter, Grid, Plus, Search, SortAsc } from "lucide-react";
 import { useRef, type KeyboardEvent } from "react";
 import { useSearchParams } from "react-router";
-
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
-  AccordionTrigger,
 } from "@/components/ui/accordion";
 
 export const SearchControls = () => {
   const inputRef = useRef<HTMLInputElement>(null);
   const [searchParams, setSearchParams] = useSearchParams();
 
+  const activeAccordion = searchParams.get("active-accordion") ?? "";
+  const selectStrength = Number(searchParams.get("strength") || "0");
+
+  const setQueryParam = (key: string, value: string) => {
+    setSearchParams((prev) => {
+      prev.set(key, value);
+      return prev;
+    });
+  };
+
   const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
-      setSearchParams((prev) => {
-        prev.set("name", inputRef.current?.value || "");
-        return prev;
-      });
+      setQueryParam("name", inputRef.current?.value || "");
+      // setSearchParams((prev) => {
+      //   prev.set("name", inputRef.current?.value || "");
+      //   return prev;
+      // });
     }
   };
 
@@ -42,17 +51,30 @@ export const SearchControls = () => {
 
         {/* Action buttons */}
         <div className="flex gap-2">
-          <Button variant="outline" className="h-12 bg-transparent">
+          <Button
+            variant={
+              activeAccordion === "active-accordion" ? "default" : "outline"
+            }
+            className="h-12"
+            onClick={() => {
+              const newActiveAccordion =
+                activeAccordion === "advanced-filters"
+                  ? ""
+                  : "advanced-filters";
+
+              setQueryParam("active-accordion", newActiveAccordion);
+            }}
+          >
             <Filter className="h-4 w-4 mr-2" />
             Filters
           </Button>
 
-          <Button variant="outline" className="h-12 bg-transparent">
+          <Button variant="outline" className="h-12">
             <SortAsc className="h-4 w-4 mr-2" />
             Sort by Name
           </Button>
 
-          <Button variant="outline" className="h-12 bg-transparent">
+          <Button variant="outline" className="h-12">
             <Grid className="h-4 w-4" />
           </Button>
 
@@ -64,8 +86,8 @@ export const SearchControls = () => {
       </div>
 
       {/* Advanced Filters */}
-      <Accordion type="single" collapsible value="item-1">
-        <AccordionItem value="item-1">
+      <Accordion type="single" collapsible value={activeAccordion}>
+        <AccordionItem value="advanced-filters">
           {/* <AccordionTrigger>Filtros Avanzados</AccordionTrigger> */}
           <AccordionContent>
             <div className="bg-white rounded-lg p-6 mb-8 shadow-sm border">
@@ -101,7 +123,7 @@ export const SearchControls = () => {
               </div>
               <div className="mt-4">
                 <label className="text-sm font-medium">
-                  Minimum Strength: 0/10
+                  Minimum Strength: {selectStrength}/10
                 </label>
                 {/* <div className="relative flex w-full touch-none select-none items-center mt-2">
             <div className="relative h-2 w-full grow overflow-hidden rounded-full bg-secondary">
@@ -112,7 +134,14 @@ export const SearchControls = () => {
             </div>
             <div className="block h-5 w-5 rounded-full border-2 border-primary bg-background ring-offset-background transition-colors" />
           </div> */}
-                <Slider defaultValue={[33]} max={100} step={1} />
+                <Slider
+                  defaultValue={[selectStrength]}
+                  onValueChange={(value) =>
+                    setQueryParam("strength", value[0].toString())
+                  }
+                  max={10}
+                  step={1}
+                />
               </div>
             </div>
           </AccordionContent>

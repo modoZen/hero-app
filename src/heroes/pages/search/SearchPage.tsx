@@ -11,17 +11,20 @@ export const SearchPage = () => {
   const [searchParams] = useSearchParams();
 
   const name = searchParams.get("name") ?? undefined;
+  const strength = searchParams.get("strength") ?? undefined;
 
   const { data = [] } = useQuery({
     queryKey: [
       "search-heroes",
       {
         name,
+        strength,
       },
     ],
     queryFn: () =>
       searchHero({
         name,
+        strength,
       }),
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
